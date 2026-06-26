@@ -36,7 +36,7 @@ curl -X POST https://simplecheckout-production.up.railway.app/checkout \
   -d '{"items":[{"name":"Product","unitPrice":50,"quantity":3}]}'
 ```
 
-Or use Swagger UI at: https://simplecheckout-production.up.railway.app/swagger
+For Swagger UI and interactive testing, run locally: `dotnet run` then visit `http://localhost:5287/swagger`
 
 ## Authentication
 
