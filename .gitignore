@@ -1,0 +1,13 @@
+bin/
+obj/
+*.user
+*.suo
+.vs/
+
+# SQLite database (auto-created on first run)
+*.db
+*.db-shm
+*.db-wal
+
+# Local secrets — copy appsettings.Development.json.example and fill in Jwt:Secret
+appsettings.Development.json
