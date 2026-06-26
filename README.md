@@ -18,6 +18,26 @@ The API starts at `http://localhost:5287`. Swagger UI is available at `/swagger`
 
 The SQLite database (`checkout.db`) is created automatically on first run — no migrations needed.
 
+## Live Demo
+
+**API running at:** https://simplecheckout-production.up.railway.app
+
+**Quick test:**
+```bash
+# 1. Get auth token
+curl -X POST https://simplecheckout-production.up.railway.app/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin","password":"admin"}'
+
+# 2. Create a checkout order (replace TOKEN with the value from step 1)
+curl -X POST https://simplecheckout-production.up.railway.app/checkout \
+  -H "Authorization: Bearer TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"items":[{"name":"Product","unitPrice":50,"quantity":3}]}'
+```
+
+Or use Swagger UI at: https://simplecheckout-production.up.railway.app/swagger
+
 ## Authentication
 
 All `/checkout` endpoints require a JWT Bearer token. Obtain one via the login endpoint:
