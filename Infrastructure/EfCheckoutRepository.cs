@@ -16,4 +16,11 @@ public class EfCheckoutRepository(SimpleCheckoutDbContext context) : ICheckoutRe
         await context.Orders
             .Include(o => o.Items)
             .FirstOrDefaultAsync(o => o.Id == id);
+
+    public async Task<List<CheckoutOrder>> GetLatestAsync(int count) =>
+        await context.Orders
+            .Include(o => o.Items)
+            .OrderByDescending(o => o.CreatedAt)
+            .Take(count)
+            .ToListAsync();
 }

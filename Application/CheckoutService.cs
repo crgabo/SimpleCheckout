@@ -50,6 +50,23 @@ public class CheckoutService(
         return order is null ? null : ToResponse(order);
     }
 
+    public async Task<List<CheckoutListResponse>> GetLatestAsync(int count = 20)
+    {
+        var orders = await repository.GetLatestAsync(count);
+        return orders.Select(ToListResponse).ToList();
+    }
+
     private static CheckoutResponse ToResponse(CheckoutOrder order) =>
         new(order.Id, order.Subtotal, order.Discount, order.Taxes, order.Total);
+
+    private static CheckoutListResponse ToListResponse(CheckoutOrder order) =>
+        new(
+            order.Id,
+            order.Subtotal,
+            order.Discount,
+            order.Taxes,
+            order.Total,
+            order.CreatedAt,
+            order.Items.Select(i => new OrderItemDto(i.Name, i.Price, i.Quantity)).ToList()
+        );
 }

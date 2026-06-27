@@ -32,5 +32,13 @@ public static class CheckoutEndpoints
         .WithName("GetCheckout")
         .Produces<CheckoutResponse>()
         .Produces(StatusCodes.Status404NotFound);
+
+        group.MapGet("/latest/list", async (CheckoutService service) =>
+        {
+            var result = await service.GetLatestAsync(20);
+            return Results.Ok(result);
+        })
+        .WithName("GetLatestCheckouts")
+        .Produces<List<CheckoutListResponse>>();
     }
 }
