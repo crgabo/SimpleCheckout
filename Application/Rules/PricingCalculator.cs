@@ -1,4 +1,6 @@
-namespace SimpleCheckout.Domain;
+namespace SimpleCheckout.Application.Rules;
+
+using SimpleCheckout.Domain;
 
 public class PricingCalculator : IPricingCalculator
 {
