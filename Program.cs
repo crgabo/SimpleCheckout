@@ -76,6 +76,7 @@ builder.Services.AddScoped<TokenService>();
 
 builder.Services.AddScoped<IDiscountCalculator, PercentageDiscountCalculator>();
 builder.Services.AddScoped<ITaxCalculator, PercentageTaxCalculator>();
+builder.Services.AddScoped<IPricingCalculator, PricingCalculator>();
 
 builder.Services.AddScoped<IValidator<CheckoutRequest>, CheckoutRequestValidator>();
 

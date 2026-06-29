@@ -85,11 +85,13 @@ Use the returned token as `Authorization: Bearer <token>` on subsequent requests
 - `taxes`    = 13% of `subtotal - discount`
 - `total`    = `subtotal + taxes - discount`
 
+**Tax calculation note:** Taxes are applied to the discounted subtotal (`subtotal - discount`) rather than the original subtotal. This approach aligns with regional tax standards in Latin America, where value-added tax and other consumption taxes are calculated on the final transaction amount after promotional discounts have been applied.
+
 ## Architecture
 
 ```
-Domain/          → Business entities and repository interfaces (no framework dependencies)
-Application/     → CheckoutService, pricing calculators, validators, JWT token service
+Domain/          → Business entities, repository interfaces, and domain services (no framework dependencies)
+Application/     → CheckoutService, validators, JWT token service
   Rules/         → IDiscountCalculator / ITaxCalculator implementations
   Validators/    → IValidator<T> implementations
 Infrastructure/  → EF Core DbContext, SQLite repositories
@@ -98,15 +100,29 @@ API/             → Minimal API endpoint groups
 
 Dependencies flow inward: `API` / `Infrastructure` → `Application` → `Domain`.
 
-Pricing rules (tax rates, discount thresholds) are stored in the database and loaded at runtime — no code changes needed to adjust rates.
+### Pricing Calculation
+
+The `IPricingCalculator` domain service orchestrates the pricing logic:
+- Accepts a list of `PricingRule` records from the database
+- Evaluates discount eligibility and applies matching calculators
+- Evaluates tax eligibility and applies matching calculators (with taxes computed on the discounted subtotal)
+- Returns a tuple of `(Discount, Taxes)` for total calculation
+
+This separation keeps `CheckoutService` focused on orchestration while pricing logic remains independently testable and configurable.
 
 ## Extending
 
-**New discount/tax type** (different algorithm):
+**New discount/tax calculator** (different algorithm):
 1. Add a value to `CalculationType` enum (`Domain/PricingRule.cs`)
 2. Create a class in `Application/Rules/` implementing `IDiscountCalculator` or `ITaxCalculator`
 3. Register it in `Program.cs`
 4. Add a record in the `PricingRules` table
+
+**Custom pricing logic** (if you need to change the overall calculation order or strategy):
+1. Create a new class implementing `IPricingCalculator` in `Domain/`
+2. Register it in `Program.cs`
+
+The default `PricingCalculator` applies discounts first, then taxes on the discounted amount — to change this behavior, create a custom implementation of `IPricingCalculator`.
 
 **New request validator:**
 1. Create a class in `Application/Validators/` implementing `IValidator<T>`
